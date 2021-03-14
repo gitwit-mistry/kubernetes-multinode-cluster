@@ -1,7 +1,7 @@
 ---
 # vars file for kuber.launch-ec2
 #
-my_aws_access_key: AKIAQDPWONFVUOBG4YUK
-my_aws_secret_key: pCtWk//c06NPUtOnyy3Wjqc940pYYp7NSW/zvM7r
+my_aws_access_key: --> enter your access key
+my_aws_secret_key: --> enter your secret key
 master_id: master-node
 worker_id: worker-node
