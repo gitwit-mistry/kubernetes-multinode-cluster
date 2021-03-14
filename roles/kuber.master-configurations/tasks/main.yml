@@ -1,0 +1,39 @@
+---
+# tasks file for kuber.master-configurations
+#
+
+#- name: reset kubeadm
+  #  shell: "yes | kubeadm reset"
+
+- name: initializing  kubeadm service
+  shell: "kubeadm init --pod-network-cidr=10.244.0.0/16  --ignore-preflight-errors=NumCPU --ignore-preflight-errors=Mem"
+  ignore_errors: yes
+
+- name: Creating directory
+  file:
+    name: "$HOME/.kube"
+    state: directory
+
+- name: Copy configuration file
+  shell: "yes | cp -i /etc/kubernetes/admin.conf $HOME/.kube/config"
+  ignore_errors: yes
+
+- name: K8s requirement
+  shell: "chown $(id -u):$(id -g) $HOME/.kube/config"
+
+- name: Setting up CNI with Flannel addons
+  shell: "kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+  ignore_errors: yes
+
+- name: Generating token for worker-node
+  shell: "kubeadm token create --print-join-command"
+  register: token
+
+- name: printing token
+  debug:
+    var: token.stdout
+
+- name: storing token
+  copy:
+    content: "{{token.stdout}}"
+    dest: token_file

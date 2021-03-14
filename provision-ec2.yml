@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  roles:
+    - kuber.launch-ec2
+
+- hosts: master,workernode
+  roles:
+    - kuber.install-req-files
+
+- hosts: master
+  roles:
+    - kuber.master-configurations
+
+- hosts: workernode
+  roles:
+    - kuber.worker-configurations
+

@@ -1,0 +1,72 @@
+---
+# tasks file for kuber.launch-ec2
+#
+- name: Basic EC2 provisioning
+  amazon.aws.ec2:
+    key_name: arth_practice_acc
+    id: "{{ worker-node }}"
+    aws_access_key: "{{ my_aws_access_key }}"
+    aws_secret_key: "{{ my_aws_secret_key }}"
+    instance_type: t2.micro
+    image: ami-08f63db601b82ff5f
+    wait: yes
+    group: kubernetes-vpc-sg
+    count: 2
+    region: ap-south-1
+    vpc_subnet_id: subnet-05bed2b4ffb1d33ef
+    assign_public_ip: yes
+    volumes:
+      - device_name: /dev/xvda
+        volume_type: gp2
+        volume_size: 8
+    instance_tags:
+            Name: kubernetes-workers
+  register: workers_details
+  
+
+- name: Basic EC2 provisioning
+  amazon.aws.ec2:
+    key_name: arth_practice_acc
+    aws_access_key: "{{ my_aws_access_key }}"
+    aws_secret_key: "{{ my_aws_secret_key }}"
+    id: "{{ master-node }}"
+    instance_type: t2.micro
+    image: ami-08f63db601b82ff5f
+    wait: yes
+    group: kubernetes-vpc-sg
+    count: 1
+    region: ap-south-1
+    vpc_subnet_id: subnet-05bed2b4ffb1d33ef
+    assign_public_ip: yes
+    volumes:
+      - device_name: /dev/xvda
+        volume_type: gp2
+        volume_size: 8
+    instance_tags:
+            Name: kubernetes-master
+  register: master_details
+
+- name: Getting the ip of master
+  debug:
+    var: master_details.instances[0].public_ip
+- name: Printng the info of workernode-2
+  debug:
+    var: workers_details.instances[0].public_ip
+- name: Printng the info of workernode-2
+  debug:
+    var: workers_details.instances[1].public_ip
+
+
+
+- name: Updating the inventory with master and worker node IPs
+  blockinfile:
+    path: inventory
+    content: |
+            [master]
+            {{ master_details.instances[0].public_ip }}  ansible_user=ec2-user
+
+
+            [workernode]
+            {{ workers_details.instances[0].public_ip }}   ansible_user=ec2-user
+            {{ workers_details.instances[1].public_ip }}   ansible_user=ec2-user
+

@@ -1,0 +1,10 @@
+
+# BEGIN ANSIBLE MANAGED BLOCK
+[master]
+35.154.189.103  ansible_user=ec2-user
+
+
+[workernode]
+13.232.21.59   ansible_user=ec2-user
+13.126.154.125   ansible_user=ec2-user
+# END ANSIBLE MANAGED BLOCK

@@ -1,0 +1,6 @@
+---
+# tasks file for kuber.worker-configurations
+#
+- name: joining slaves with the master
+  command: "{{ hostvars[item]['token']['stdout'] }}"
+  with_items: "{{ groups['master'] }}" 

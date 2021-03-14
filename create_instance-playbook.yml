@@ -1,0 +1,22 @@
+---
+- name: Create an EC2 instance
+  hosts: localhost
+  tasks:
+    - name: Basic EC2 provisioning
+      amazon.aws.ec2:
+        key_name: arth_practice_acc
+        instance_type: t2.micro
+        image: ami-08f63db601b82ff5f
+        wait: yes
+        group: ansible-webserver
+        count: 2
+        region: ap-south-1
+        vpc_subnet_id: subnet-d20d04ba
+        assign_public_ip: yes
+        volumes:
+          - device_name: /dev/xvda
+            volume_type: gp2
+            volume_size: 8
+        instance_tags:
+                Name: kubernetes-workers
+
